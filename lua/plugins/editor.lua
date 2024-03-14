@@ -10,7 +10,7 @@ return {
     },
     keys = {
         {
-            "<leader>f",
+            "\\\\",
             function() require("telescope.builtin").find_files() end,
             desc = "Search Files"
         },
@@ -20,9 +20,30 @@ return {
             desc = "Search Buffers"
         },
         {
-            "\\\\",
+            "<leader>?",
             function() require("telescope.builtin").oldfiles() end,
             desc = "Recent Opened Files"
+        },
+        {
+            "<leader>f",
+            function()
+                local telescope = require("telescope")
+                local function telescope_buffer_dir()
+                    return vim.fn.expand("%:p:h")
+                end
+                telescope.extensions.file_browser.file_browser({
+                    path = "%:p:h",
+                    cwd = telescope_buffer_dir(),
+                    respect_ignore = false,
+                    hidden = true,
+                    disable_devicons = true,
+                    grouped = true,
+                    previewer = false,
+                    initial_mode = "normal",
+                    layout_config = { height = 40 }
+                })
+            end,
+            desc = "Open File Browser with the path of current buffer"
         }
     },
     config = function(_, opts)
@@ -35,6 +56,12 @@ return {
             buffers = {
                 theme = "dropdown",
                 previewer = false
+            }
+        }
+        opts.extensions = {
+            file_browser = {
+                theme = "dropdown",
+                hijack_netrw = true
             }
         }
         telescope.setup(opts)
